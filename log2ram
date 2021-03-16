@@ -1,0 +1,1 @@
+git clone https://github.com/azlux/log2ram.git && cd log2ram && chmod +x install.sh && sudo ./install.sh && sudo nano /etc/log2ram.conf
