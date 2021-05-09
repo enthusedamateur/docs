@@ -1,8 +1,8 @@
 #Add new user
-#sudo adduser  username
-#sudo username
+#sudo adduser username
 #sudo usermod -aG sudo username
-#sudo deluser username
+#sudo su username
+#sudo deluser username_pi
 
 
 #Add Sudo
