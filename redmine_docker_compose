@@ -1,0 +1,70 @@
+sudo apt update
+sudo apt upgrade
+sudo apt install docker docker-compose
+
+mkdir redmine
+cd redmine
+
+nano docker-compose.yml
+#Use your credentials for “redmine” and “redmine_password”
+
+# My Redmine
+# from peppe8o.com
+version: '3'
+services:
+ redmine:
+  image: redmine:latest
+  restart: unless-stopped
+  ports:
+   - 8080:3000
+  environment:
+   REDMINE_DB_MYSQL: db
+   REDMINE_DB_USERNAME: redmine
+   REDMINE_DB_PASSWORD: redmine_password
+   REDMINE_SECRET_KEY_BASE: supersecretkey
+ db:
+  build: .
+  restart: unless-stopped
+
+
+nano Dockerfile
+
+
+FROM debian
+RUN apt update && apt install mariadb-server -y
+RUN sed -i 's/bind-address/bind-address = 0.0.0.0 #/i' /etc/mysql/mariadb.conf.d/50-server.cnf
+RUN mkdir /mysql_scripts
+COPY mySqlScript.sql /mysql_scripts/
+RUN /etc/init.d/mysql start && mysql -uroot --password="" -e "source /mysql_scripts/mySqlScript.sql"
+CMD /etc/init.d/mysql start && tail -f /dev/null
+For security purposes please remember, once all procedure will be completed, to enforce your MariaDB root password.
+
+
+nano mySqlScript.sql
+
+#Change “redmine” and “redmine_password” to credentials set above:
+
+CREATE DATABASE redmine CHARACTER SET utf8mb4;
+CREATE USER 'redmine'@'%' IDENTIFIED BY 'redmine_password';
+GRANT ALL PRIVILEGES ON redmine.* TO 'redmine'@'%';
+FLUSH PRIVILEGES;
+quit
+
+docker-compose up -d
+
+#operations are still going on inside Redmine container.
+Docker ps 
+
+#change redmine_redmine_1 to container name from above
+
+docker logs redmine_redmine_1
+
+#Below indicates complete
+INFO WEBrick::HTTPServer#start: pid=1 port=3000
+#http://<<yourRaspberryIpAddress>>:8080”
+
+#Use “Sign in” link on top/right:
+#Use following default Redmine credentials:
+
+login: admin
+Password: admin
