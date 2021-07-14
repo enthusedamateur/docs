@@ -1,3 +1,5 @@
+# Identifying a Raspberry Pi
+
 On at least a Pi 3, you can turn the green (SD card activity) LED to be on constantly with the following command (as root):
 
     echo 1 > /sys/class/leds/led0/brightness
