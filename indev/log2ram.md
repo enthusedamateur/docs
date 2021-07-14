@@ -1,9 +1,11 @@
-git clone https://github.com/azlux/log2ram.git && cd log2ram && chmod +x install.sh && sudo ./install.sh && sudo nano /etc/log2ram.conf
+# Log2Ram - Save your SD card!
 
-#change ram folder size to 128M
+    git clone https://github.com/azlux/log2ram.git && cd log2ram && chmod +x install.sh && sudo ./install.sh && sudo nano /etc/log2ram.conf
 
-sudo reboot
+change ram folder size to 128M
 
-#check disk is mounted after reboot
+    sudo reboot
 
-df -h
+check disk is mounted after reboot
+
+    df -h
