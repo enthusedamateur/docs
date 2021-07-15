@@ -12,11 +12,12 @@ Test your account in a new session, then delete the old account.
     usermod -aG sudo username
 
 ### Passwordless Sudo
-1.  Edit sudoers file:
+
+Edit sudoers file:
 
     sudo nano /etc/sudoers
 
-2.  add:
+add this line, changing USER as appropriate:
 
     USER ALL=(ALL) NOPASSWD: ALL
 
