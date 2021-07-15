@@ -21,5 +21,4 @@ add this line, changing USER as appropriate:
 
     USER ALL=(ALL) NOPASSWD: ALL
 
-where USER is your passwordless sudo username
-Save your changes.
+Save changes.
