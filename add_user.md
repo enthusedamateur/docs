@@ -15,6 +15,7 @@ Test your account in a new session, then delete the old account.
 1.  Edit sudoers file:
 
     sudo nano /etc/sudoers
+
 2.  add:
 
     USER ALL=(ALL) NOPASSWD: ALL
