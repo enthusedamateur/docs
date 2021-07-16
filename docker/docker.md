@@ -9,13 +9,9 @@
 First we need to install python and some dependencies.
 
     sudo apt-get install libffi-dev libssl-dev
-
- 
-
+#
     sudo apt install python3-dev
-
- 
-
+#
     sudo apt-get install -y python3 python3-pip
 
 Now we can install docker-compose
