@@ -1,10 +1,12 @@
 # Add new user
     sudo adduser USER
+<!-- -->
     sudo usermod -aG sudo USER
 
 Test your account in a new session, then delete the old account.
 
     sudo su USER
+<!-- -->
     sudo deluser PI
 
 

@@ -9,6 +9,7 @@ Now that Pi will have the green LED on steady, which makes it very easy to ident
 To put the LED back to its default state:
 
     echo 0 > /sys/class/leds/led0/brightness
+<!-- -->
     echo mmc0 > /sys/class/leds/led0/trigger
 
 Iterate through all of your Pis this way until you've got them all addressed and labeled accordingly.
