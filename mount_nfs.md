@@ -9,7 +9,7 @@ Automount units must be named after the automount directories they control.
 
 Example: the automount point /home/USER/mount/nas must be configured in a unit file home-USER-mount-nas.mount.
 
-    mkdir /home/USER/nfs/nas
+    mkdir /home/USER/mount/nas
 <!-- -->
     showmount -e 192.168.1.?
 
