@@ -31,4 +31,10 @@ Setup auto mount Systemd file
 
 
 #### Enable in Systemd
-    sudo systemctl enable nfs-nas-DIRNAME.mount && sudo systemctl daemon-reload && sudo systemctl start nfs-nas-DIRNAME.mount && sudo systemctl status nfs-nas-DIRNAME.mount
+    sudo systemctl enable nfs-nas-DIRNAME.mount
+<!-- -->
+    sudo systemctl daemon-reload
+<!-- -->
+    sudo systemctl start nfs-nas-DIRNAME.mount
+<!-- -->
+    sudo systemctl status nfs-nas-DIRNAME.mount
