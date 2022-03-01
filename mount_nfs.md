@@ -7,22 +7,22 @@
 ##### Important
 Automount units must be named after the automount directories they control.
 
-Example: the automount point /home/USER/mount/nas must be configured in a unit file home-USER-mount-nas.mount.
+Example: the automount point /mnt/remoteshare must be configured in a unit file mnt-remoteshare.mount.
 
-    mkdir /home/USER/mount/nas
+    mkdir /mnt/remoteshare
 <!-- -->
     showmount -e 192.168.1.?
 
 Setup auto mount Systemd file
 
-    sudo nano /etc/systemd/system/home-USER-mount-nas-DIRNAME.mount
+    sudo nano /etc/systemd/system/mnt-remoteshare.mount
 <!-- -->
     [Unit]
     Description=NFS Directory
 
     [Mount]
-    What=192.168.1.?:/nfs/RemoteNFSDirName
-    Where=/nfs/nas/DIRNAME
+    What=192.168.1.?:/remotehost/directory
+    Where=/mnt/remoteshare
     Type=nfs
     Options=rw,hard,intr,x-systemd.automount
 
@@ -31,10 +31,10 @@ Setup auto mount Systemd file
 
 
 #### Enable in Systemd
-    sudo systemctl enable nfs-nas-DIRNAME.mount
+    sudo systemctl enable mnt-remoteshare.mount
 <!-- -->
     sudo systemctl daemon-reload
 <!-- -->
-    sudo systemctl start nfs-nas-DIRNAME.mount
+    sudo systemctl start mnt-remoteshare.mount
 <!-- -->
-    sudo systemctl status nfs-nas-DIRNAME.mount
+    sudo systemctl status mnt-remoteshare.mount
