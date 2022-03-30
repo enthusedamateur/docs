@@ -15,6 +15,10 @@ To deploy the new public key to the target device, use the following command. Re
 the step above. Replace USER with the username on the target device. Replace DEVICE with the IP or Hostname of the target device.
 
     ssh-copy-id -i DEVICE.key.pub USER@DEVICE
+    
+    
+  ## Windows PowerShell  
+    type $env:USERPROFILE\.ssh\id_rsa.pub | ssh {IP-ADDRESS-OR-FQDN} "cat >> .ssh/authorized_keys"
 
 Enter the password for the user account your're connecting with.
 
