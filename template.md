@@ -14,8 +14,8 @@ Unordered List	- First item
 
 Code	`code`
 
-
+---
 Horizontal Rule	---
-
+---
 
 [linkname](https://www.example.com)
