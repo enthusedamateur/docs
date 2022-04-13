@@ -21,14 +21,14 @@
 - Third item
 
 
-####Code
+#### Code
 `code`
 
 #### Horizontal Rule	---
 ---
 
 #### Links
-##### "[linkname](https://www.example.com)"
+##### [linkname] (https://www.example.com) - *remove the space*
 
 #### Task List
 - [x] Write the press release
