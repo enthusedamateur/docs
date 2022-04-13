@@ -28,7 +28,7 @@
 ---
 
 #### Links
-##### '[linkname](https://www.example.com)'
+##### "[linkname](https://www.example.com)"
 
 #### Task List
 - [x] Write the press release
