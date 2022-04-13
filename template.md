@@ -10,6 +10,12 @@ Ordered List	1. First item
 Unordered List	- First item
 - Second item
 - Third item
+
+
 Code	`code`
+
+
 Horizontal Rule	---
-Link	[title](https://www.example.com)
+
+
+[linkname](https://www.example.com)
