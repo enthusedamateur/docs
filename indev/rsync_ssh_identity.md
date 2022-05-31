@@ -1,6 +1,6 @@
 
 # 
-'rsync -Pav -e "ssh -i $HOME/.ssh/somekey" username@hostname:/from/dir/ /to/dir/'
+`rsync -Pav -e "ssh -i $HOME/.ssh/somekey" username@hostname:/from/dir/ /to/dir/`
 
 ##### -P shows progress
 ##### -a archive - save permissions
