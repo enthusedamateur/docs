@@ -1,0 +1,20 @@
+# this file should be named with the location of the local dir,
+# replacing / with - 
+# e.g the local mount point /home/pi/remote would be saved as
+# home-pi-remote.mount
+# 
+# This file should be saved in /etc/systemd/system/
+#
+
+
+[Unit]
+Description=NFS Directory
+
+[Mount]
+What=192.168.10.15:/RAID6/Movies
+Where=/home/michael/plex/movies
+Type=nfs
+Options=rw,hard,intr,x-systemd.automount
+
+[Install]
+WantedBy=multi-user.target
