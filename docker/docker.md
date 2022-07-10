@@ -73,7 +73,7 @@ Now we can install docker-compose
 
 ## Install script
 
-   #!/bin/bash
+    #!/bin/bash
 
     url=https://get.docker.com
 
