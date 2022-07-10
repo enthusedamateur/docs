@@ -87,7 +87,7 @@ Now we can install docker-compose
     
     # Install dependencies for docker-compose
     echo Installing dependencies...
-    sudo apt-get install libffi-dev libssl-dev python3-dev python3 python3-pip -y >/de>
+    sudo apt-get install libffi-dev libssl-dev python3-dev python3 python3-pip -y >/dev/null
     # Install docker-compose
     echo Installing docker-compose...
     sudo pip3 install docker-compose >/dev/null
