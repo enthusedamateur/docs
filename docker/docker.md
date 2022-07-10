@@ -73,10 +73,18 @@ Now we can install docker-compose
 
 ## Install script
 
-    #!/bin/bash
-    
+   #!/bin/bash
+
+    url=https://get.docker.com
+
     # Run docker installation script
-    curl -sSD https://get.docker.com | sh
+    curl ${url} > tempdockerinstall.sh
+    
+    # Add executible permission on temp file
+    chmod +x tempdockerinstall.sh
+    
+    # Run temp install file
+    ./tempdockerinstall.sh
 
     # Install dependencies for docker-compose
     sudo apt-get install libffi-dev libssl-dev python3-dev python3 python3-pip -y
@@ -86,6 +94,9 @@ Now we can install docker-compose
 
     # Enable docker to run on boot
     sudo systemctl enable docker
+
+    # remove temp install script
+    rm tempdockerinstall.sh
 
 
 ### Link
