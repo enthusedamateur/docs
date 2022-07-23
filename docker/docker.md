@@ -71,6 +71,38 @@ Now we can install docker-compose
       influxdb:
 
 
+## Install script
+
+    #!/bin/bash
+
+    url=https://get.docker.com
+
+    # Run docker installation script
+    echo Installing docker...
+    curl ${url} > tempdockerinstall.sh
+    
+    chmod +x tempdockerinstall.sh
+    
+    ./tempdockerinstall.sh
+    
+    # Install dependencies for docker-compose
+    echo Installing dependencies...
+    sudo apt-get install libffi-dev libssl-dev python3-dev python3 python3-pip -y >/dev/null
+    # Install docker-compose
+    echo Installing docker-compose...
+    sudo pip3 install docker-compose >/dev/null
+    
+    # Enable docker to run on boot
+    echo Enabling docker to run on boot...
+    sudo systemctl enable docker >/dev/null 2>&1
+    
+    # remove temp install script
+    echo Removing temp files...
+    rm tempdockerinstall.sh >/dev/null
+    
+    echo "Script complete!"
+
+
 ### Link
 
 https://docs.docker.com/engine/install/debian/#install-using-the-convenience-script
