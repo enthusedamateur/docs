@@ -24,3 +24,5 @@ sudo curl -Lo installer.sh https://raw.githubusercontent.com/home-assistant/supe
 Start the HA installer script change the machine with any of these
 
 https://github.com/home-assistant/supervised-installer#supported-machine-types
+
+sudo bash installer.sh --machine raspberrypi4
