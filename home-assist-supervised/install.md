@@ -19,7 +19,13 @@ Give Pi user needed permissions
 sudo usermod -aG docker pi
 
 Get the HA installer script
+# No longer works
 sudo curl -Lo installer.sh https://raw.githubusercontent.com/home-assistant/supervised-installer/master/installer.sh
+
+#New link
+wget https://github.com/home-assistant/supervised-installer/releases/latest/download/homeassistant-supervised.deb
+dpkg -i homeassistant-supervised.deb
+
 
 Start the HA installer script change the machine with any of these
 
