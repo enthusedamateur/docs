@@ -21,6 +21,6 @@ Edit sudoers file:
 
 add this line, changing USER as appropriate:
 
-    $sudo ALL=(ALL) NOPASSWD: ALL
+    %sudo   ALL=(ALL) NOPASSWD: ALL
 
 Save changes.
