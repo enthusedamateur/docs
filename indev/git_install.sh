@@ -6,8 +6,8 @@ git config --global init.defaultBranch main
 git config --global pull.rebase false
 git config --global pull.rebase true 
 git config --global pull.ff only
-git config --global user.name "Your name here"
-git config --global user.email "your_email@example.com"
+git config --global user.name "username here"
+git config --global user.email "email@example.com"
 git config --global color.ui true
 
 # Paste your ssh public key into your github account settings.
