@@ -83,7 +83,9 @@ Now we can install docker-compose
     
     chmod +x tempdockerinstall.sh
     
-    ./tempdockerinstall.sh
+    echo This may take a minute or two...
+    
+    ./tempdockerinstall.sh >dev/null
     
     # Install dependencies for docker-compose
     echo Installing dependencies...
