@@ -8,11 +8,8 @@
 
 First we need to install python and some dependencies.
 
-    sudo apt-get install libffi-dev libssl-dev python3-dev python3 python3-pip -y
+    sudo apt-get install libffi-dev libssl-dev python3-dev python3 python3-pip -y && sudo pip3 install docker-compose
 
-Now we can install docker-compose
-
-    sudo pip3 install docker-compose
 
 # Enable docker to run on boot
 
