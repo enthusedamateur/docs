@@ -82,7 +82,7 @@ First we need to install python and some dependencies.
     
     echo This may take a minute or two...
     
-    ./tempdockerinstall.sh >dev/null
+    ./tempdockerinstall.sh > /dev/null
     
     # Install dependencies for docker-compose
     echo Installing dependencies...
