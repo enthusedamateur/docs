@@ -80,7 +80,7 @@ First we need to install python and some dependencies.
     
     chmod +x tempdockerinstall.sh
     
-    echo This may take a minute or two...
+    echo This may take a few minutes...
     
     ./tempdockerinstall.sh > /dev/null
     
