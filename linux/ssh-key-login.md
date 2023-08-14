@@ -21,8 +21,3 @@ the step above. Replace USER with the username on the target device. Replace DEV
     type $env:USERPROFILE\.ssh\id_rsa.pub | ssh {IP-ADDRESS-OR-FQDN} "cat >> .ssh/authorized_keys"
 
 Enter the password for the user account your're connecting with.
-
-## Disable password login
-**This provides extra security, but if you lose the key, you'll be locked out of your account and you may lose all access to your device.**
-
-Edit the file 
