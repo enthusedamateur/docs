@@ -13,24 +13,23 @@ log() {
 exec >> "${log_location}/${log_file}" 2>&1
 
 # Log script start
-log "Script started"
+log "Script started."
 
 
 # Check if NFS share is mounted
 if ! mountpoint -q /mnt/backup; then
     log "NFS share is not mounted. Exiting..."
-    log "Script aborted at $(date)"
     exit 1
 fi
 
 # Log NFS mount
-log "NFS mounted"
+log "NFS mounted."
 
 # Define the backup directories
 backup_dirs="/home /etc /var/lib/docker /var/lib/mysql /var/www /var/log /root"
 
 # Log dirs defined
-log "Defined dirs for backup - $backup_dirs"
+log "Defined dirs for backup. - $backup_dirs"
 
 # Define the backup location and folder names
 backup_location="/mnt/backup"
@@ -59,17 +58,17 @@ if [[ ! -d "${backup_location}/${primary_backup_folder}" ]]; then
 fi
 
 # Create the backup folder
-mkdir -p "${backup_location}/${backup_folder}" || { log "Failed to create backup folder. Exiting..."; log "Script aborted at $(date)"; exit 1; }
+mkdir -p "${backup_location}/${backup_folder}" || { log "Failed to create backup folder. Exiting..."; log "Script aborted."; exit 1; }
 
 # Log start of backup process
-log "Backup started at $(date)"
-log "New backup started at ${backup_location}/${backup_folder}"
+log "Starting incremental backup..."
+log "New backup dir - ${backup_location}/${backup_folder}"
 
 # Use rsync to perform incremental backup
 rsync -avz --delete --link-dest="${backup_location}/${previous_backup_folder}" ${backup_dirs} "${backup_location}/${backup_folder}" > /dev/null 2>&1
 
 # Log completion of backup process
-log "Backup completed at $(date)"
+log "Backup complete."
 
 # Function to trim older log files
 trim_old_logs() {
@@ -77,18 +76,18 @@ trim_old_logs() {
 }
 
 # Log trimming logs started
-log "Trimming logfiles at $(date)"
+log "Trimming logfiles..."
 
 # Trim older log files
 trim_old_logs
 
 # Log trimming backups started
-log "Trimming older backups at $(date)"
+log "Trimming older backups..."
 
 # Trim backups other than primary and the last three
 cd "${backup_location}" && ls -1d */ | grep -E '^[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9]{2}-[0-9]{2}-[0-9]{2}$' | grep -vE "${primary_backup_folder}" | sort -r | awk 'NR>3' | xargs -d '\n' rm -rf --
 
 # Log script end
-log "Script ended"
+log "Script complete."
 
 exit 0
