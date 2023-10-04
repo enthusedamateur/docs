@@ -1,24 +1,47 @@
 # Name the file docker-compose.yml
-
 version: "3.9"
 name: media-stack
 services:
   vpn:
-    ## Read https://github.com/qdm12/gluetun/wiki for details on configuring VPN for different service providers.
+    # Read https://github.com/qdm12/gluetun/wiki for details on configuring VPN for different service providers.
     container_name: vpn
-    image: qmcgaw/gluetun:v3.32
+    image: qmcgaw/gluetun:v3.35.0
     cap_add:
       - NET_ADMIN
     environment:
       - VPN_SERVICE_PROVIDER=protonvpn # Valid values: nordvpn, expressvpn, protonvpn, surfshark or custom
-      - VPN_TYPE=openvpn
-      - OPENVPN_USER=oCJQjeXBTwg_CHsdbdqb.SdO
-      - OPENVPN_PASSWORD=7j+qsTnwhnehGMhMM91pfYe6
-      ## SERVER_COUNTRIES is required for ExpressVPN and ProtonVPN. Comment SERVER_REGIONS if SERVER_COUNTRIES is used.
-      - SERVER_COUNTRIES=${SERVER_COUNTRIES:-United Kingdom}
+      - OPENVPN_USER={ADD_YOUR_CREDS_HERE}
+      - OPENVPN_PASSWORD={ADD_YOUR_CREDS_HERE}
+      - DOT=off
+      ## For list of server countries, visit https://raw.githubusercontent.com/qdm12/gluetun/master/internal/storage/servers.json
+      #- SERVER_COUNTRIES="United Kingdom"
+      #- FREE_ONLY=on  # Valid with protonvpn only. Value willbe set "on" if using free subscription provided by protonvpn
+
+      ## Enable below if VPN_SERVICE_PROVIDER=custom
+      #- VPN_TYPE=openvpn # or wireguard. 
+
+      ## If VPN_TYPE is openvpn
+      #- OPENVPN_CUSTOM_CONFIG=/gluetun/custom.conf
+
+      ## If VPN_TYPE is wireguard. Replace below env variables as required.
+      # - VPN_ENDPOINT_IP=1.2.3.4                                               # Replace with your wg endpoint ip or domain
+      # - VPN_ENDPOINT_PORT=51820                                               # Replace with wg server port
+      # - WIREGUARD_PUBLIC_KEY=wAUaJMhAq3NFutLHIdF8AN0B5WG8RndfQKLPTEDHal0=     # Replace with your wg public key
+      # - WIREGUARD_PRIVATE_KEY=wOEI9rqqbDwnN8/Bpp22sVz48T71vJ4fYmFWujulwUU=    # Replace with your wg client private key
+      # - WIREGUARD_PRESHARED_KEY=xOEI9rqqbDwnN8/Bpp22sVz48T71vJ4fYmFWujulwUU=  # Replaced with your wg pre-shared key
+      # - WIREGUARD_ADDRESSES="10.64.222.21/32"                                 # Replace with wg address
+
+    ## Enable volume if VPN_SERVICE_PROVIDER=custom and VPN_TYPE=openvpn is used
+    # volumes:
+      # - /yourpath/yourconfig.conf:/gluetun/config.conf:ro
     networks:
-      - media-network
+      - medianetwork
+    hostname: vpn
+    # Uncomment/enable below ports if VPN is used/enabled
     ports:
+      # VPN ports
+      - 8888:8888/tcp # HTTP proxy
+      - 8388:8388 # Shadowsocks
       # qbittorrent ports
       - 5080:5080
       - 6881:6881
@@ -31,173 +54,199 @@ services:
       - 8989:8989
       # bazarr ports
       - 6767:6767
-      # Transmission ports. Uncomment below if Transmission is used with VPN
-      # - 9091:9091
-      # - 51413:51413
-      # - 51413:51413/udp
-    deploy:
-      resources:
-        limits:
-          cpus: '0.2'  # Maximum of 0.5 CPU cores
-          memory: 512M  # Maximum of 512 megabytes of RAM
-        #reservations:
-        #  cpus: '0.2'  # Minimum of 0.2 CPU cores
-        #  memory: 256M  # Minimum of 256 megabytes of RAM
     restart: "unless-stopped"
-
+    healthcheck:
+      #test: ["healthcheck"] # Customise this test to the container.
+      interval: 10s
+      timeout: 5s
+      retries: 10
   qbittorrent:
+    ## Default credentials of qBittorrent - Username: admin password: adminadmin ##
+    ## Change password after install from UI --> Tools --> Options --> WebUI ##
     container_name: qbittorrent
-    image: linuxserver/qbittorrent:4.5.2
-    # Comment this if vpn is disabled
-    depends_on:
-      - vpn
-    #networks:
-    #  - media-network
-    network_mode: service:vpn # Comment this line if vpn is disabled
+    image: lscr.io/linuxserver/qbittorrent:4.5.4
+   # Unomment below if vpn is enabled
+    depends_on:               # Uncomment this line if vpn is enabled
+      vpn:                   # Uncomment this line if vpn is enabled
+       condition: service_healthy
+    # Comment below lines if VPN is enabled
+    #networks:               # Comment this line if vpn is enabled
+    #  - medianetwork           # Comment this line if vpn is enabled
+
+    # Unomment below line if vpn is enabled
+    network_mode: service:vpn
+
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=UTC
       - WEBUI_PORT=5080
     volumes:
-      - qbittorrent-config:/config
-      - torrent-downloads:/downloads
-      - media-stack_media:/mnt/media
-    deploy:
-      resources:
-        limits:
-          cpus: '0.2'  # Maximum of 0.5 CPU cores
-          memory: 512M  # Maximum of 512 megabytes of RAM
-        #reservations:
-        #  cpus: '0.2'  # Minimum of 0.2 CPU cores
-        #  memory: 256M  # Minimum of 256 megabytes of RAM        
-    ## Uncomment below ports if VPN is disabled.
-    # ports:
-    #   - 5080:5080
-    #   - 6881:6881
-    #   - 6881:6881/udp
+      - ./qbit:/config
+      - /mnt/media/:/downloads
+
+    ## Comment/Disable below ports if VPN is enabled
+    #ports:
+    #  - 5080:5080
+    #  - 6881:6881
+    #  - 6881:6881/udp
     restart: "unless-stopped"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://vpn:5080 || exit 1"] # Customise this test to the container.
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   radarr:
     container_name: radarr
-    image: linuxserver/radarr:latest
+    image: lscr.io/linuxserver/radarr:4.7.5
+    depends_on:               # Uncomment this line if vpn is enabled
+      vpn:                   # Uncomment this line if vpn is enabled
+       condition: service_healthy
+    # Comment below lines if VPN is enabled
+    #networks:               # Comment this line if vpn is enabled
+    #  - medianetwork           # Comment this line if vpn is enabled
+
+    # Unomment below line if vpn is enabled
     network_mode: service:vpn
-    #networks:
-    #  - media-network
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=UTC
-    ## Uncomment below ports if VPN is disabled.
-    #ports:
-    #  - 7878:7878
+    #ports:         # Comment this line if vpn is enabled
+    #  - 7878:7878  # Comment this line if vpn is enabled
     volumes:
-      - radarr-config:/config
-      - torrent-downloads:/downloads
-      - media-stack_media:/mnt/media
-    deploy:
-      resources:
-        limits:
-          cpus: '0.1'  # Maximum of 0.5 CPU cores
-          memory: 256M  # Maximum of 512 megabytes of RAM
-        #reservations:
-        #  cpus: '0.2'  # Minimum of 0.2 CPU cores
-        #  memory: 256M  # Minimum of 256 megabytes of RAM
+      - ./radarr:/config
+      - /mnt/media:/downloads
     restart: "unless-stopped"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://vpn:7878 || exit 1"] # Customise this test to the container.
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   sonarr:
     image: linuxserver/sonarr:4.0.0-develop
     container_name: sonarr
+    depends_on:               # Uncomment this line if vpn is enabled
+      vpn:                   # Uncomment this line if vpn is enabled
+       condition: service_healthy
+    # Comment below lines if VPN is enabled
+    #networks:               # Comment this line if vpn is enabled
+    #  - medianetwork           # Comment this line if vpn is enabled
+
+    # Unomment below line if vpn is enabled
     network_mode: service:vpn
-    #networks:
-    #  - media-network
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=UTC
     volumes:
-      - sonarr-config:/config
-      - torrent-downloads:/downloads
-      - media-stack_media:/mnt/media
-    ## Uncomment below ports if VPN is disabled.
-    #ports:
-    #  - 8989:8989
-    deploy:
-      resources:
-        limits:
-          cpus: '0.1'  # Maximum of 0.5 CPU cores
-          memory: 256M  # Maximum of 512 megabytes of RAM
-        #reservations:
-        #  cpus: '0.2'  # Minimum of 0.2 CPU cores
-        #  memory: 256M  # Minimum of 256 megabytes of RAM
+      - ./sonarr:/config
+      - /mnt/media:/downloads
+    #ports:         # Comment this line if vpn is enabled
+    #  - 8989:8989  # Comment this line if vpn is enabled
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://vpn:8989 || exit 1"] # Customise this test to the container.
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   prowlarr:
     container_name: prowlarr
-    image: linuxserver/prowlarr:1.3.1-develop
-    # Comment this if vpn is disabled
-    depends_on:
-      - vpn
-    network_mode: service:vpn # Comment this line if vpn is disabled
-    #networks:
-    #  - media-network
+    image: linuxserver/prowlarr:1.8.6
+    depends_on:               # Uncomment this line if vpn is enabled
+      vpn:                   # Uncomment this line if vpn is enabled
+       condition: service_healthy
+    # Comment below lines if VPN is enabled
+    #networks:               # Comment this line if vpn is enabled
+    #  - medianetwork           # Comment this line if vpn is enabled
+
+    # Unomment below line if vpn is enabled
+    network_mode: service:vpn
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=UTC
     volumes:
-      - prowlarr-config:/config
-      - media-stack_media:/mnt/media
-    ## Uncomment below ports if VPN is disabled.
-    # ports:
-    #   - 9696:9696
-    deploy:
-      resources:
-        limits:
-          cpus: '0.1'  # Maximum of 0.5 CPU cores
-          memory: 256M  # Maximum of 512 megabytes of RAM
-        #reservations:
-        #  cpus: '0.2'  # Minimum of 0.2 CPU cores
-        #  memory: 256M  # Minimum of 256 megabytes of RAM
+      - ./prowlarr:/config
+    #ports:        # Comment this line if vpn is enabled
+    #  - 9696:9696 # Comment this line if vpn is enabled
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://vpn:9696 || exit 1"] # Customise this test to the container.
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
   bazarr:
     image: linuxserver/bazarr:latest
     container_name: bazarr
+    depends_on:               # Uncomment this line if vpn is enabled
+      vpn:                   # Uncomment this line if vpn is enabled
+       condition: service_healthy
+    # Comment below lines if VPN is enabled
+    #networks:               # Comment this line if vpn is enabled
+    #  - medianetwork           # Comment this line if vpn is enabled
+
+    # Unomment below line if vpn is enabled
     network_mode: service:vpn
-    #networks:
-    #  - media-network
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=UTC
     volumes:
-      - bazarr-config:/config
-      - media-stack_media:/mnt/media
-    ## Uncomment below ports if VPN is disabled.
-    #ports:
-    #  - 6767:6767
-    deploy:
-      resources:
-        limits:
-          cpus: '0.1'  # Maximum of 0.5 CPU cores
-          memory: 256M  # Maximum of 512 megabytes of RAM
+      - ./bazarr:/config
+      - /mnt/media:/downloads
+    #ports:         # Comment this line if vpn is enabled
+    #  - 6767:6767  # Comment this line if vpn is enabled
+    #deploy:
+    #  resources:
+    #    limits:
+    #      cpus: '0.1'  # Maximum of 0.5 CPU cores
+    #      memory: 256M  # Maximum of 512 megabytes of RAM
         #reservations:
         #  cpus: '0.2'  # Minimum of 0.2 CPU cores
         #  memory: 256M  # Minimum of 256 megabytes of RAM
     restart: unless-stopped
-volumes:
-  torrent-downloads:
-  bazarr-config:
-  radarr-config:
-  sonarr-config:
-  prowlarr-config:
-  qbittorrent-config:
-  tx-config:
-  tx-watch:
-  media-stack_media:
-    external: true
-    name: media-stack_media
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://vpn:6767 || exit 1"] # Customise this test to the container.
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+ #jellyfin:
+  #  image: linuxserver/jellyfin:10.8.10
+  #  container_name: jellyfin
+  #  networks:
+  #    - medianetwork
+  #  environment:
+  #    - PUID=1000
+  #    - PGID=1000
+  #    - TZ=UTC
+  #  volumes:
+  #    - jellyfin-config:/config
+  #    - torrent-downloads:/data
+  # devices:
+  #   - /dev/videoN:/dev/videoN # Mount GPU device 
+  #  ports:
+  #    - 8096:8096
+  #    - 7359:7359/udp
+  #    - 8920:8920
+  #  restart: unless-stopped
+  
+
+
+#volumes:
+#  torrent-downloads:
+#  radarr-config:
+#  sonarr-config:
+#  prowlarr-config:
+#  jellyfin-config:
+#  qbittorrent-config:
+#  cleanmyarr-config:
 
 networks:
-  media-network:
+  medianetwork:
     external: true
