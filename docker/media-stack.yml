@@ -54,7 +54,7 @@ services:
       - 8989:8989
       # bazarr ports
       - 6767:6767
-    restart: "unless-stopped"
+    restart: always
     healthcheck:
       #test: ["healthcheck"] # Customise this test to the container.
       interval: 10s
@@ -90,7 +90,7 @@ services:
     #  - 5080:5080
     #  - 6881:6881
     #  - 6881:6881/udp
-    restart: "unless-stopped"
+    restart: always
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://vpn:5080 || exit 1"] # Customise this test to the container.
       interval: 10s
@@ -118,7 +118,7 @@ services:
     volumes:
       - ./radarr:/config
       - /mnt/media:/downloads
-    restart: "unless-stopped"
+    restart: always
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://vpn:7878 || exit 1"] # Customise this test to the container.
       interval: 10s
@@ -146,7 +146,7 @@ services:
       - /mnt/media:/downloads
     #ports:         # Comment this line if vpn is enabled
     #  - 8989:8989  # Comment this line if vpn is enabled
-    restart: unless-stopped
+    restart: always
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://vpn:8989 || exit 1"] # Customise this test to the container.
       interval: 10s
@@ -173,7 +173,7 @@ services:
       - ./prowlarr:/config
     #ports:        # Comment this line if vpn is enabled
     #  - 9696:9696 # Comment this line if vpn is enabled
-    restart: unless-stopped
+    restart: always
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://vpn:9696 || exit 1"] # Customise this test to the container.
       interval: 10s
@@ -209,7 +209,7 @@ services:
         #reservations:
         #  cpus: '0.2'  # Minimum of 0.2 CPU cores
         #  memory: 256M  # Minimum of 256 megabytes of RAM
-    restart: unless-stopped
+    restart: always
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://vpn:6767 || exit 1"] # Customise this test to the container.
       interval: 10s
@@ -234,7 +234,7 @@ services:
   #    - 8096:8096
   #    - 7359:7359/udp
   #    - 8920:8920
-  #  restart: unless-stopped
+  #  restart: always
   
 
 
